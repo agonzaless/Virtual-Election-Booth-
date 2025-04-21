@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Election Ballot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+   <style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }
+
+    .ballot-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .ballot-content {
+        flex: 1;
+        margin-right: 2rem;
+    }
+
+    .ballot-title {
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 2rem;
+        font-size: 2rem;
+    }
+
+    .voting-instructions {
+        background-color: #ecf0f1;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+    }
+
+    .voting-instructions h3 {
+        color: #2c3e50;
+        margin-top: 0;
+        font-size: 1.2rem;
+    }
+
+    .voting-instructions ul {
+        padding-left: 1.5rem;
+        font-size: 0.9rem;
+    }
+
+    .selection-container {
+        margin-bottom: 2rem;
+    }
+
+    .custom-select {
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 1rem;
+        border: 1px solid #bdc3c7;
+        border-radius: 4px;
+        background-color: #fff;
+    }
+
+    .candidates-section {
+        margin-top: 2rem;
+    }
+
+    .position-title {
+        color: #2c3e50;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+    }
+
+    .candidates-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .candidate-card {
+        position: relative;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        padding: 1rem;
+    }
+
+    .candidate-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .candidate-card.selected {
+        box-shadow: 0 4px 10px rgba(46, 204, 113, 0.4);
+        border: 2px solid #2ecc71;
+    }
+
+    .candidate-name {
+        font-size: 1.2rem; /* Increased from 1rem */
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+
+    .candidate-info {
+        font-size: 0.9rem;
+        color: #7f8c8d;
+    }
+
+    .vote-btn {
+        background-color: #2ecc71;
+        color: #fff;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        font-size: 0.9rem;
+        margin-top: 1rem;
+    }
+
+    .vote-btn:hover {
+        background-color: #27ae60;
+    }
+
+    .vote-btn.selected {
+        background-color: #27ae60;
+    }
+
+    .candidate-radio {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    .submit-ballot-container {
+        margin-top: 2rem;
+        text-align: center;
+    }
+
+    .submit-ballot-btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 1.1rem;
+        background-color: #27ae60;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .submit-ballot-btn:hover {
+        background-color: #2ecc71;
+    }
+
+    .voter-selections {
+        width: 300px;
+        background-color: #ecf0f1;
+        padding: 1.5rem;
+        border-radius: 8px;
+        position: sticky;
+        top: 2rem;
+        align-self: flex-start;
+    }
+
+    .voter-selections h3 {
+        color: #2c3e50;
+        margin-top: 0;
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+    }
+
+    .voter-selections ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .voter-selections li {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        padding: 0.5rem;
+        background-color: #fff;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .voter-selections .position {
+        font-weight: bold;
+        color: #2c3e50;
+    }
+
+    .voter-selections .candidate {
+        color: #27ae60;
+    }
+    .candidate-dropdown {
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 1rem;
+        border: 1px solid #bdc3c7;
+        border-radius: 4px;
+        background-color: #fff;
+        margin-bottom: 1rem;
+    }
+
+    .candidate-details {
+        display: none;
+    }
+
+    .candidate-details.active {
+        display: block;
+    }
+    .header-actions {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.logout-btn {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.logout-btn:hover {
+    background-color: #c0392b;
+}
+</style>
+</head>
+<body>
+    <div class="ballot-container">
+        <h1 class="ballot-title">Official Election Ballot</h1>
+        <div class="header-actions">
+    <button onclick="window.location.href='{{ url_for('castevote') }}'" class="logout-btn">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+</div>
+        <div class="voting-instructions">
+            <h3><i class="fas fa-info-circle"></i> Voting Instructions:</h3>
+            <ul>
+                <li>Select one candidate per position</li>
+                <li>Click on a candidate's name to view their details</li>
+                <li>Review all your selections before submitting</li>
+                <li>Click "Submit Ballot" when you're ready to cast your vote</li>
+                <li>Your vote is final once submitted</li>
+            </ul>
+        </div>
+
+        <!-- Position Selection -->
+        <div class="selection-container">
+            <label for="position-select">Select Position:</label>
+            <select id="position-select" class="custom-select" onchange="showCandidates(this.value)">
+                <option value="">Choose a Position</option>
+                {% for position in positions %}
+                    <option value="{{ position }}">{{ position }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Voting Progress Tracker -->
+        <div id="voting-progress" class="voting-progress">
+            <h3>Your Voting Progress</h3>
+            <p>Positions voted: <span id="positions-voted">0</span> / <span id="total-positions">{{ positions|length }}</span></p>
+        </div>
+
+        <form id="ballot-form" action="{{ url_for('ballot') }}" method="POST">
+            <!-- Candidates Display -->
+            {% for position in positions %}
+            <div id="candidates-{{ position|replace(' ', '-') }}" class="candidates-section" style="display: none;">
+                <h2 class="position-title">{{ position }} Candidates</h2>
+                <select class="candidate-dropdown" onchange="showCandidateDetails(this)">
+                    <option value="">Select a Candidate</option>
+                    {% for candidate in candidates[position] %}
+                    <option value="{{ candidate._id }}">{{ candidate.first_name }} {{ candidate.last_name }} ({{ candidate.political_party }})</option>
+                    {% endfor %}
+                </select>
+                <div class="candidates-grid">
+                    {% for candidate in candidates[position] %}
+                    <div id="candidate-details-{{ candidate._id }}" class="candidate-card candidate-details">
+                        <input type="radio" name="{{ position }}" value="{{ candidate._id }}" class="candidate-radio" id="{{ candidate._id }}">
+                        <div class="card-header">
+                            <img src="{{ url_for('static', filename=candidate.photo_path) }}"
+                                 alt="{{ candidate.first_name }}'s photo"
+                                 class="candidate-photo">
+                        </div>
+
+                        <div class="candidate-info">
+                            <h3 class="candidate-name">{{ candidate.first_name }} {{ candidate.last_name }}</h3>
+                            <div class="candidate-details">
+                                <span class="party-badge {{ candidate.political_party.lower() }}">
+                                    {{ candidate.political_party }}
+                                </span>
+                                <p class="state">{{ candidate.state }}</p>
+                            </div>
+
+                            <div class="action-buttons">
+                                <a href="{{ candidate.profile_link }}"
+                                   target="_blank"
+                                   class="profile-btn">
+                                    <i class="fas fa-user"></i> View Profile
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+
+            <div class="submit-ballot-container">
+           <button type="button" class="submit-ballot-btn" onclick="castVote()">
+            <i class="fas fa-ballot-check"></i> Submit Ballot
+           </button>
+            </div>
+        </form>
+    </div>
+	<script>
+    const votes = {};
+    let positionsVoted = 0;
+    const totalPositions = {{positions | length}};
+
+    function showCandidates(position) {
+        document.querySelectorAll('.candidates-section').forEach(section => {
+            section.style.display = 'none';
+        });
+
+        if (position) {
+            const sectionId = `candidates-${position.replace(' ', '-')}`;
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.style.display = 'block';
+            } else {
+                console.error("Section not found:", sectionId);
+            }
+        }
+    }
+
+    function showCandidateDetails(select) {
+        const candidateId = select.value;
+        const candidateSection = select.closest('.candidates-section');
+
+        candidateSection.querySelectorAll('.candidate-details').forEach(details => {
+            details.classList.remove('active');
+        });
+
+        if (candidateId) {
+            const selectedDetails = candidateSection.querySelector('#candidate-details-' + candidateId);
+            if (selectedDetails) {
+                selectedDetails.classList.add('active');
+            }
+        }
+    }
+
+    function vote(position, candidateId) {
+        if (!votes[position]) {
+            positionsVoted++;
+        }
+        votes[position] = candidateId;
+
+        const candidates = document.querySelectorAll(`[name="${position}"]`);
+        candidates.forEach(candidate => {
+            candidate.closest('.candidate-card').classList.remove('selected');
+        });
+
+        const selectedCandidate = document.getElementById(candidateId);
+        selectedCandidate.closest('.candidate-card').classList.add('selected');
+
+        updateSubmitButtonState();
+        updateVotingProgress();
+    }
+
+    function updateSubmitButtonState() {
+        const submitButton = document.querySelector('.submit-ballot-btn');
+        const allPositionsVoted = positionsVoted === totalPositions;
+
+        submitButton.disabled = !allPositionsVoted;
+        submitButton.style.opacity = allPositionsVoted ? '1' : '0.5';
+    }
+
+    function updateVotingProgress() {
+        document.getElementById('positions-voted').textContent = positionsVoted;
+    }
+
+    function castVote() {
+    if (positionsVoted !== totalPositions) {
+        alert('Please vote for all positions before submitting.');
+        return;
+    }
+
+    const formData = new FormData(document.querySelector('#ballot-form'));
+
+        fetch('/cast_vote', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => {
+        if (response.redirected) {
+            window.location.href = response.url;
+        } else {
+            return response.json();
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while casting your vote. Please try again.');
+    });
+}
+
+    function collectDemographics() {
+        // Implement this function to collect demographic data from your form
+        // This is just a placeholder example
+        return {
+            age: document.getElementById('age').value,
+            gender: document.getElementById('gender').value,
+            location: document.getElementById('location').value,
+            // Add other demographic fields as needed
+        };
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        updateSubmitButtonState();
+        updateVotingProgress();
+
+        document.querySelectorAll('.candidate-radio').forEach(radio => {
+            radio.addEventListener('change', function() {
+                vote(this.name, this.value);
+            });
+        });
+
+        document.querySelector('.submit-ballot-btn').addEventListener('click', function(event) {
+    event.preventDefault(); // Prevent default form submission
+    castVote();
+});
+
+function castVote() {
+    // Collect vote data from the form
+    const formData = new FormData(document.querySelector('#ballot-form'));
+
+    // Send a POST request to the cast_vote route
+    fetch('/cast_vote', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Vote cast successfully!');
+            // Optionally redirect to a confirmation page
+            // window.location.href = '/vote-confirmation';
+        } else {
+            alert('Error casting vote: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while casting your vote. Please try again.');
+    });
+}
+    });
+</script>
+</body>
+</html>

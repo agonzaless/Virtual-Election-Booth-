@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Voter Registration</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 8px; }
+        button { width: 100%; padding: 10px; background-color: #4CAF50; color: white; border: none; }
+    </style>
+</head>
+<body>
+    <form action="{{ url_for('register') }}" method="post">
+        <div class="form-group">
+            <label for="first_name">First Name:</label>
+            <input type="text" id="first_name" name="first_name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="last_name">Last Name:</label>
+            <input type="text" id="last_name" name="last_name" required>
+        </div>
+
+       <div class="form-group">
+    <label for="email">Email:</label>
+    <div class="email-container" style="display: flex; gap: 10px;">
+        <input type="email" id="email" name="email" required style="flex: 2;">
+        <select id="email-provider" name="email-provider" style="flex: 1;">
+            <option value="gmail">Gmail</option>
+            <option value="outlook">Outlook</option>
+            <option value="other">Other</option>
+        </select>
+    </div>
+</div>
+
+
+        <div class="form-group">
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender" required>
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="SSN">SSN:</label>
+            <input type="text" id="SSN" name="SSN" placeholder="XXX-XX-XXXX" required>
+        </div>
+
+        <div class="dob-container">
+            <label>Date of Birth:</label>
+            <select id="dob-month" name="dob-month" required>
+                <option value="">Month</option>
+                <!-- Months will be populated by JavaScript -->
+            </select>
+
+            <select id="dob-day" name="dob-day" required>
+                <option value="">Day</option>
+                <!-- Days will be populated by JavaScript -->
+            </select>
+
+            <select id="dob-year" name="dob-year" required>
+                <option value="">Year</option>
+                <!-- Years will be populated by JavaScript -->
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address" required>
+        </div>
+
+        <div class="form-group">
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city" required>
+        </div>
+
+        <div class="form-group">
+            <label for="state">State:</label>
+            <select id="state" name="state" required>
+                <option value="">Select State</option>
+                 <option value="Alabama">Alabama</option>
+                    <option value="Alaska">Alaska</option>
+                    <option value="Arizona">Arizona</option>
+                    <option value="Arizona">Arizona</option>
+                 <option value="Arkansas">Arkansas</option>
+    <option value="California">California</option>
+    <option value="Colorado">Colorado</option>
+    <option value="Connecticut">Connecticut</option>
+    <option value="Delaware">Delaware</option>
+    <option value="Florida">Florida</option>
+    <option value="Georgia">Georgia</option>
+    <option value="Hawaii">Hawaii</option>
+    <option value="Idaho">Idaho</option>
+    <option value="Illinois">Illinois</option>
+    <option value="Indiana">Indiana</option>
+    <option value="Iowa">Iowa</option>
+    <option value="Kansas">Kansas</option>
+    <option value="Kentucky">Kentucky</option>
+    <option value="Louisiana">Louisiana</option>
+    <option value="Maine">Maine</option>
+    <option value="Maryland">Maryland</option>
+    <option value="Massachusetts">Massachusetts</option>
+    <option value="Michigan">Michigan</option>
+    <option value="Minnesota">Minnesota</option>
+    <option value="Mississippi">Mississippi</option>
+    <option value="Missouri">Missouri</option>
+    <option value="Montana">Montana</option>
+    <option value="Nebraska">Nebraska</option>
+    <option value="Nevada">Nevada</option>
+    <option value="New Hampshire">New Hampshire</option>
+    <option value="New Jersey">New Jersey</option>
+    <option value="New Mexico">New Mexico</option>
+    <option value="New York">New York</option>
+    <option value="North Carolina">North Carolina</option>
+    <option value="North Dakota">North Dakota</option>
+    <option value="Ohio">Ohio</option>
+    <option value="Oklahoma">Oklahoma</option>
+    <option value="Oregon">Oregon</option>
+    <option value="Pennsylvania">Pennsylvania</option>
+    <option value="Rhode Island">Rhode Island</option>
+    <option value="South Carolina">South Carolina</option>
+    <option value="South Dakota">South Dakota</option>
+    <option value="Tennessee">Tennessee</option>
+    <option value="Texas">Texas</option>
+    <option value="Utah">Utah</option>
+    <option value="Vermont">Vermont</option>
+    <option value="Virginia">Virginia</option>
+    <option value="Washington">Washington</option>
+    <option value="West Virginia">West Virginia</option>
+    <option value="Wisconsin">Wisconsin</option>
+    <option value="Wyoming">Wyoming</option>
+
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="zip_code">Zip Code:</label>
+            <input type="text" id="zip_code" name="zip_code" required>
+        </div>
+
+        <div class="form-group">
+            <label for="drivers_license">Driver's License Number:</label>
+            <input type="text" id="drivers_license" name="drivers_license" required>
+        </div>
+
+        <div class="form-group">
+            <label for="ethnicity">Ethnicity:</label>
+            <select id="ethnicity" name="ethnicity" required>
+                <option value="" disabled selected>Select your ethnicity</option>
+                <option value="Hispanic or Latino">Hispanic or Latino</option>
+                <option value="Black or African American">Black or African American</option>
+                <option value="White">White</option>
+                <option value="Asian">Asian</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+
+       <button type="submit">Register</button>
+</form>
+
+<div class="confirmation-container" style="display: none;">
+    <h1>Registration Successful!</h1>
+    <p>Please check your email for your voting token.</p>
+    <p>You'll need this token to cast your vote.</p>
+     <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+</div>
+
+<script>
+
+        document.getElementById('email-provider').addEventListener('change', function() {
+    const emailInput = document.getElementById('email');
+    const provider = this.value;
+
+    if (provider === 'gmail') {
+        emailInput.pattern = "^[a-zA-Z0-9._%+-]+@gmail\\.com$";
+        emailInput.title = "Please enter a valid Gmail address";
+    } else if (provider === 'outlook') {
+        emailInput.pattern = "^[a-zA-Z0-9._%+-]+@(outlook\\.com|hotmail\\.com)$";
+        emailInput.title = "Please enter a valid Outlook address";
+    } else {
+        emailInput.pattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+        emailInput.title = "Please enter a valid email address";
+    }
+});
+
+        // Date of Birth Handling
+        window.onload = function() {
+            populateMonths();
+            populateYears();
+        };
+
+        function populateMonths() {
+            const months = ["January", "February", "March", "April", "May", "June",
+                            "July", "August", "September", "October", "November", "December"];
+            const monthDropdown = document.getElementById('dob-month');
+            months.forEach((month, index) => {
+                const option = document.createElement('option');
+                option.value = index + 1;
+                option.innerText = month;
+                monthDropdown.appendChild(option);
+            });
+        }
+
+        function populateYears() {
+            const yearDropdown = document.getElementById('dob-year');
+            const currentYear = new Date().getFullYear();
+            for (let i = currentYear; i >= 1900; i--) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.innerText = i;
+                yearDropdown.appendChild(option);
+            }
+        }
+
+        function populateDays() {
+            const dayDropdown = document.getElementById('dob-day');
+            const monthDropdown = document.getElementById('dob-month');
+            const yearDropdown = document.getElementById('dob-year');
+
+            dayDropdown.innerHTML = '<option value="">Day</option>';
+
+            const month = parseInt(monthDropdown.value);
+            const year = parseInt(yearDropdown.value);
+
+            if (month && year) {
+                const daysInMonth = new Date(year, month, 0).getDate();
+                for (let i = 1; i <= daysInMonth; i++) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.innerText = i;
+                    dayDropdown.appendChild(option);
+                }
+            }
+        }
+
+        // Update days when month or year changes
+        document.getElementById('dob-month').addEventListener('change', populateDays);
+        document.getElementById('dob-year').addEventListener('change', populateDays);
+
+        // SSN Formatting
+        document.getElementById('SSN').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+
+            if (value.length > 3) {
+                value = value.slice(0, 3) + '-' + value.slice(3);
+            }
+            if (value.length > 6) {
+                value = value.slice(0, 6) + '-' + value.slice(6);
+            }
+
+            value = value.slice(0, 11);
+            e.target.value = value;
+        });
+
+        // Form Validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            // SSN validation
+            const ssnInput = document.getElementById('SSN');
+            const ssnRegex = /^\d{3}-\d{2}-\d{4}$/;
+            if (!ssnRegex.test(ssnInput.value)) {
+                e.preventDefault();
+                alert('Please enter a valid SSN in the format XXX-XX-XXXX');
+                return;
+            }
+
+            // Email validation
+            const emailInput = document.getElementById('email');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(emailInput.value)) {
+                e.preventDefault();
+                alert('Please enter a valid email address');
+                return;
+            }
+
+            // Age validation (must be 18+)
+            const yearInput = document.getElementById('dob-year');
+            const currentYear = new Date().getFullYear();
+            const selectedYear = parseInt(yearInput.value);
+            if (currentYear - selectedYear < 18) {
+                e.preventDefault();
+                alert('You must be at least 18 years old to register');
+                return;
+            }
+        });
+    </script>
+</body>
+</html>

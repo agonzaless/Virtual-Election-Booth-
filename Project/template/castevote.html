@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cast Your Vote </title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+{% block content %}
+<div class="validation-container">
+    <h2>Cast Your Vote - Validation</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if already_voted %}
+        <div class="alert alert-warning">
+            <strong>Notice:</strong> You have already cast your vote for this election. You cannot vote again.
+        </div>
+    {% else %}
+        <form method="POST" action="{{ url_for('castevote') }}">
+            <div class="form-group">
+                <label for="email">Email Address:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="ssn">Social Security Number:</label>
+                <input type="text" id="ssn" name="ssn" required>
+            </div>
+
+            <div class="form-group">
+                <label for="voting_token">Voting Token:</label>
+                <input type="text" id="voting_token" name="voting_token" required>
+            </div>
+
+            <input type="hidden" id="voter_state" name="voter_state" value="{{ session.get('voter_state', '') }}">
+
+            <button type="submit" class="btn btn-success">Proceed to Ballot</button>
+        </form>
+    {% endif %}
+
+    <a href="{{ url_for('index') }}" class="btn btn-primary">
+        <i class="fas fa-arrow-left"></i> Back to Home
+    </a>
+</div>
+{% endblock %}

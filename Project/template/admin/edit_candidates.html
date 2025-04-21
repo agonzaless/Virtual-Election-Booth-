@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Candidates</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .btn-custom {
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-4 mb-4">Edit Candidates</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for candidate in candidates %}
+                <tr>
+                    <td>{{ candidate.first_name }} {{ candidate.last_name }}</td>
+                    <td>{{ candidate.position }}</td>
+                    <td>
+                       <a href="{{ url_for('admin_candidate', candidate_id=candidate._id) }}" class="btn btn-outline-primary btn-sm btn-custom">Edit</a>
+                       <button onclick="deleteCandidate('{{ candidate._id }}')" class="btn btn-outline-danger btn-sm btn-custom">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div id="edit-form-container" style="display: none;">
+            <h2>Edit Candidate</h2>
+            <form id="edit-candidate-form">
+                <input type="hidden" id="candidate-id">
+                <div class="mb-3">
+                    <label for="first-name" class="form-label">First Name:</label>
+                    <input type="text" id="first-name" name="first_name" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="last-name" class="form-label">Last Name:</label>
+                    <input type="text" id="last-name" name="last_name" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="position" class="form-label">Position:</label>
+                    <input type="text" id="position" name="position" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="political-party" class="form-label">Political Party:</label>
+                    <input type="text" id="political-party" name="political_party" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="state" class="form-label">State:</label>
+                    <input type="text" id="state" name="state" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <input type="email" id="email" name="email" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone:</label>
+                    <input type="tel" id="phone" name="phone" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="dob" class="form-label">Date of Birth:</label>
+                    <input type="date" id="dob" name="dob" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="profile-link" class="form-label">Profile Link:</label>
+                    <input type="url" id="profile-link" name="profile_link" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="photo" class="form-label">Photo:</label>
+                    <input type="file" id="photo" name="photo" accept="image/*" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-primary btn-custom">Save Changes</button>
+                <button type="button" onclick="cancelEdit()" class="btn btn-secondary btn-custom">Cancel</button>
+            </form>
+        </div>
+
+        <div class="mt-4">
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary btn-sm btn-custom">Back to Dashboard</a>
+            <a href="{{ url_for('election') }}" class="btn btn-outline-secondary btn-sm btn-custom">Back to Elections</a>
+        </div>
+    </div>
+
+    <script>
+        const elections = {{ elections|tojson|safe }};
+
+        function editCandidate(candidateId) {
+            $.get(`/admin/candidates/${candidateId}`, function(data) {
+                const candidate = JSON.parse(data);
+                $('#candidate-id').val(candidate._id.$oid);
+                $('#first-name').val(candidate.first_name);
+                $('#last-name').val(candidate.last_name);
+                $('#position').val(candidate.position);
+                $('#political-party').val(candidate.political_party);
+                $('#state').val(candidate.state);
+                $('#email').val(candidate.email);
+                $('#phone').val(candidate.phone);
+                $('#dob').val(candidate.dob);
+                $('#profile-link').val(candidate.profile_link);
+                $('#edit-form-container').show();
+            });
+        }
+
+        function deleteCandidate(candidateId) {
+    if (confirm('Are you sure you want to delete this candidate?')) {
+        $.ajax({
+            url: `/admin/candidates/${candidateId}`,
+            type: 'DELETE',
+            success: function(response) {
+                // Refresh stats
+                $.get('/refresh-stats');
+
+                // Refresh ballot if it exists
+                if (window.opener && !window.opener.closed) {
+                    window.opener.location.reload();
+                }
+
+                // Reload current page
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                alert('Error deleting candidate: ' + error);
+            }
+        });
+    }
+}
+
+        function cancelEdit() {
+            $('#edit-form-container').hide();
+            $('#edit-candidate-form')[0].reset();
+        }
+
+        function submitToBallot(candidateId) {
+            $.ajax({
+                url: '/submit_to_ballot/' + candidateId,
+                type: 'POST',
+                success: function(response) {
+                    alert('Candidate submitted to ballot successfully');
+                    window.location.href = '/ballot';
+                },
+                error: function(xhr, status, error) {
+                    alert('Error submitting to ballot: ' + error);
+                }
+            });
+        }
+
+
+        $('#edit-candidate-form').submit(function(e) {
+            e.preventDefault();
+            const candidateId = $('#candidate-id').val();
+            const formData = new FormData(this);
+
+            $.ajax({
+                url: `/admin/candidates/${candidateId}`,
+                type: 'PUT',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    alert('Candidate updated successfully');
+                    location.reload();
+                },
+                error: function(xhr, status, error) {
+                    alert('Error updating candidate: ' + error);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

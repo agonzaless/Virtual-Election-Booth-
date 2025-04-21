@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="confirmation-container">
+    <div class="confirmation-card">
+        <div class="success-icon">
+            <svg viewBox="0 0 24 24">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+            </svg>
+        </div>
+
+        <h1>Thank You for Voting!</h1>
+        <p>Your vote has been successfully recorded.</p>
+
+        <div class="confirmation-details">
+            <p>Date: {{ datetime.utcnow().strftime('%B %d, %Y') }}</p>
+            <p>Time: {{ datetime.utcnow().strftime('%I:%M %p') }}</p>
+            <p>Confirmation ID: {{ session.get('vote_id', '') }}</p>
+        </div>
+
+        <div class="action-buttons">
+            <a href="{{ url_for('index') }}" class="btn primary">Return Home</a>
+            <a href="#" class="btn secondary" onclick="window.print()">Print Receipt</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,80 @@
+2024-11-17 21:04:08,060 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2024-11-17 21:04:08,060 - INFO - [33mPress CTRL+C to quit[0m
+2024-11-17 21:04:08,063 - INFO -  * Restarting with stat
+2024-11-17 21:04:09,075 - WARNING -  * Debugger is active!
+2024-11-17 21:04:09,079 - INFO -  * Debugger PIN: 814-976-249
+2024-11-17 21:04:13,775 - INFO - 127.0.0.1 - - [17/Nov/2024 21:04:13] "GET / HTTP/1.1" 200 -
+2024-11-17 21:04:13,830 - INFO - 127.0.0.1 - - [17/Nov/2024 21:04:13] "[33mGET /static/css/style.css HTTP/1.1[0m" 404 -
+2024-11-17 21:04:20,594 - INFO - 127.0.0.1 - - [17/Nov/2024 21:04:20] "POST /admin_login HTTP/1.1" 200 -
+2024-11-17 21:04:27,955 - INFO - 127.0.0.1 - - [17/Nov/2024 21:04:27] "[32mPOST /admin_login HTTP/1.1[0m" 302 -
+2024-11-17 21:04:27,962 - INFO - 127.0.0.1 - - [17/Nov/2024 21:04:27] "GET /admin_dashboard HTTP/1.1" 200 -
+2024-11-17 21:04:29,450 - INFO - 127.0.0.1 - - [17/Nov/2024 21:04:29] "GET /election HTTP/1.1" 200 -
+2024-11-17 21:04:32,148 - INFO - 127.0.0.1 - - [17/Nov/2024 21:04:32] "GET /candidate HTTP/1.1" 200 -
+2024-11-17 21:04:32,158 - INFO - 127.0.0.1 - - [17/Nov/2024 21:04:32] "[33mGET /static/styles.css HTTP/1.1[0m" 404 -
+2024-11-17 21:04:38,992 - INFO - 127.0.0.1 - - [17/Nov/2024 21:04:38] "GET /candidate HTTP/1.1" 200 -
+2024-11-17 21:04:39,008 - INFO - 127.0.0.1 - - [17/Nov/2024 21:04:39] "[33mGET /static/styles.css HTTP/1.1[0m" 404 -
+2024-11-17 21:04:40,907 - INFO - 127.0.0.1 - - [17/Nov/2024 21:04:40] "GET /admin_dashboard HTTP/1.1" 200 -
+2024-11-17 21:04:41,848 - INFO - 127.0.0.1 - - [17/Nov/2024 21:04:41] "GET /register HTTP/1.1" 200 -
+2024-11-17 21:06:05,374 - ERROR - Registration error: name 're' is not defined
+Traceback (most recent call last):
+  File "C:\Users\amber\Project\Project\app.py", line 390, in register
+    if not validate_ssn(ssn):
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\amber\Project\Project\app.py", line 372, in validate_ssn
+    ssn = re.sub(r'\D', '', ssn)
+          ^^
+NameError: name 're' is not defined. Did you forget to import 're'
+2024-11-17 21:06:05,376 - INFO - 127.0.0.1 - - [17/Nov/2024 21:06:05] "[32mPOST /register HTTP/1.1[0m" 302 -
+2024-11-17 21:06:05,381 - INFO - 127.0.0.1 - - [17/Nov/2024 21:06:05] "GET /register HTTP/1.1" 200 -
+2024-11-17 21:34:36,874 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2024-11-17 21:34:36,874 - INFO - [33mPress CTRL+C to quit[0m
+2024-11-17 21:34:36,877 - INFO -  * Restarting with stat
+2024-11-17 21:34:37,678 - WARNING -  * Debugger is active!
+2024-11-17 21:34:37,681 - INFO -  * Debugger PIN: 814-976-249
+2024-11-17 21:34:38,286 - INFO - 127.0.0.1 - - [17/Nov/2024 21:34:38] "GET / HTTP/1.1" 200 -
+2024-11-17 21:34:38,347 - INFO - 127.0.0.1 - - [17/Nov/2024 21:34:38] "[33mGET /static/css/style.css HTTP/1.1[0m" 404 -
+2024-11-17 21:34:54,890 - INFO - 127.0.0.1 - - [17/Nov/2024 21:34:54] "[32mPOST /admin_login HTTP/1.1[0m" 302 -
+2024-11-17 21:34:54,901 - INFO - 127.0.0.1 - - [17/Nov/2024 21:34:54] "GET /admin_dashboard HTTP/1.1" 200 -
+2024-11-17 21:34:57,311 - INFO - 127.0.0.1 - - [17/Nov/2024 21:34:57] "GET /election HTTP/1.1" 200 -
+2024-11-17 21:35:00,241 - INFO - 127.0.0.1 - - [17/Nov/2024 21:35:00] "GET /candidate HTTP/1.1" 200 -
+2024-11-17 21:35:00,250 - INFO - 127.0.0.1 - - [17/Nov/2024 21:35:00] "[33mGET /static/styles.css HTTP/1.1[0m" 404 -
+2024-11-17 21:35:07,450 - INFO - 127.0.0.1 - - [17/Nov/2024 21:35:07] "GET /register HTTP/1.1" 200 -
+2024-11-17 21:35:34,596 - ERROR - Registration error: name 'random' is not defined
+Traceback (most recent call last):
+  File "C:\Users\amber\Project\Project\app.py", line 442, in register
+    email_sent = multi_gmail_handler.send_email(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\amber\Project\Project\app.py", line 115, in send_email
+    random.shuffle(account_keys)
+    ^^^^^^
+NameError: name 'random' is not defined. Did you forget to import 'random'
+2024-11-17 21:35:34,599 - INFO - 127.0.0.1 - - [17/Nov/2024 21:35:34] "[32mPOST /register HTTP/1.1[0m" 302 -
+2024-11-17 21:35:34,607 - INFO - 127.0.0.1 - - [17/Nov/2024 21:35:34] "GET /register HTTP/1.1" 200 -
+2024-11-17 21:36:44,439 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2024-11-17 21:36:44,440 - INFO - [33mPress CTRL+C to quit[0m
+2024-11-17 21:36:44,441 - INFO -  * Restarting with stat
+2024-11-17 21:36:45,484 - WARNING -  * Debugger is active!
+2024-11-17 21:36:45,487 - INFO -  * Debugger PIN: 814-976-249
+2024-11-17 21:36:45,674 - INFO - 127.0.0.1 - - [17/Nov/2024 21:36:45] "GET / HTTP/1.1" 200 -
+2024-11-17 21:36:45,752 - INFO - 127.0.0.1 - - [17/Nov/2024 21:36:45] "[33mGET /static/css/style.css HTTP/1.1[0m" 404 -
+2024-11-17 21:36:51,888 - INFO - 127.0.0.1 - - [17/Nov/2024 21:36:51] "[32mPOST /admin_login HTTP/1.1[0m" 302 -
+2024-11-17 21:36:51,908 - INFO - 127.0.0.1 - - [17/Nov/2024 21:36:51] "GET /admin_dashboard HTTP/1.1" 200 -
+2024-11-17 21:36:53,425 - INFO - 127.0.0.1 - - [17/Nov/2024 21:36:53] "GET /register HTTP/1.1" 200 -
+2024-11-17 21:37:25,785 - INFO - 127.0.0.1 - - [17/Nov/2024 21:37:25] "[32mPOST /register HTTP/1.1[0m" 302 -
+2024-11-17 21:37:25,791 - INFO - 127.0.0.1 - - [17/Nov/2024 21:37:25] "GET /register HTTP/1.1" 200 -
+2024-11-17 21:52:32,019 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2024-11-17 21:52:32,019 - INFO - [33mPress CTRL+C to quit[0m
+2024-11-17 21:52:32,021 - INFO -  * Restarting with stat
+2024-11-17 21:52:32,783 - WARNING -  * Debugger is active!
+2024-11-17 21:52:32,785 - INFO -  * Debugger PIN: 814-976-249
+2024-11-17 21:52:35,137 - INFO - 127.0.0.1 - - [17/Nov/2024 21:52:35] "GET / HTTP/1.1" 200 -
+2024-11-17 21:52:35,204 - INFO - 127.0.0.1 - - [17/Nov/2024 21:52:35] "[33mGET /static/css/style.css HTTP/1.1[0m" 404 -
+2024-11-17 21:52:41,773 - INFO - 127.0.0.1 - - [17/Nov/2024 21:52:41] "[32mPOST /admin_login HTTP/1.1[0m" 302 -
+2024-11-17 21:52:41,783 - INFO - 127.0.0.1 - - [17/Nov/2024 21:52:41] "GET /admin_dashboard HTTP/1.1" 200 -
+2024-11-17 21:52:43,487 - INFO - 127.0.0.1 - - [17/Nov/2024 21:52:43] "GET /register HTTP/1.1" 200 -
+2024-11-17 21:53:10,308 - INFO - 127.0.0.1 - - [17/Nov/2024 21:53:10] "[32mPOST /register HTTP/1.1[0m" 302 -
+2024-11-17 21:53:10,312 - INFO - 127.0.0.1 - - [17/Nov/2024 21:53:10] "GET /register HTTP/1.1" 200 -

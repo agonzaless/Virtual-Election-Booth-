@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registration Confirmation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="confirmation-container">
+        <h1>Registration Confirmation!</h1>
+        <p>Check your email for the voting token.</p>
+
+        <div class="button-group">
+            <a href="{{ url_for('admin_dashboard') }}" class="btn-dashboard">
+                <i class="fas fa-tachometer-alt"></i> Go to Admin Dashboard
+            </a>
+        </div>
+    </div>
+</body>
+</html>
+
+

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Voter Verification</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="verification-container">
+        <h2>Voter Verification</h2>
+        <form id="verificationForm" action="{{ url_for('verify_voter') }}" method="POST">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="ssn">Last 4 digits of SSN:</label>
+                <input type="text" id="ssn" name="ssn" maxlength="4" required>
+            </div>
+            <div class="form-group">
+                <label for="token">Voting Token:</label>
+                <input type="text" id="token" name="token" required>
+            </div>
+            <button type="submit">Verify Identity</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('verificationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = {
+                email: document.getElementById('email').value,
+                ssn: document.getElementById('ssn').value,
+                token: document.getElementById('token').value
+            };
+
+            fetch('/verify_voter', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/castevote';
+                } else {
+                    alert(data.message);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

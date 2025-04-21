@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Registration</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        input[type="url"],
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .btn-custom {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .btn-outline-primary {
+            color: #3498db;
+            border: 1px solid #3498db;
+            background-color: transparent;
+        }
+        .btn-outline-primary:hover {
+            background-color: #3498db;
+            color: white;
+        }
+        .btn-outline-secondary {
+            color: #95a5a6;
+            border: 1px solid #95a5a6;
+            background-color: transparent;
+        }
+        .btn-outline-secondary:hover {
+            background-color: #95a5a6;
+            color: white;
+        }
+        .alert {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .alert-danger {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        #election-details {
+            background-color: #e8f4fd;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+	<div class="container">
+    <h2>Candidate Registration</h2>
+    <div class="form-group">
+    <label for="position">Select Position:</label>
+    <select name="position" id="position" required onchange="updateElectionDates(this.value)">
+        <option value="">Choose Position</option>
+        {% for election in elections %}
+        <option value="{{ election.position }}">{{ election.position }}</option>
+        {% endfor %}
+    </select>
+</div>
+{% if election and election.early_voting_start %}
+
+{% endif %}
+
+<!-- Election Dates Dropdown -->
+<div class="form-group" id="election-dates-container" style="display: none;">
+    <label for="election_dates">Select Election:</label>
+    <select name="election_id" id="election_dates" required onchange="showElectionDetails(this.value)">
+        <option value="">Choose Election</option>
+        {% for election in elections %}
+            <option value="{{ election._id }}"
+                    data-early-start="{{ election.early_voting_start|datetime('%m/%d/%Y %I:%M %p') if election.early_voting_start }}"
+                    data-early-end="{{ election.early_voting_end|datetime('%m/%d/%Y %I:%M %p') if election.early_voting_end }}"
+                    data-election-start="{{ election.election_date_start|datetime('%m/%d/%Y %I:%M %p') if election.election_date_start }}"
+                    data-election-end="{{ election.election_date_end|datetime('%m/%d/%Y %I:%M %p') if election.election_date_end }}">
+                {{ election.position }} - {{ election.election_date_start|datetime('%m/%d/%Y %I:%M %p') if election.election_date_start }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
+
+<!-- Early Voting Dates Display -->
+<div class="form-group" id="early-voting-dates-container" style="display: none;">
+    <label>Early Voting Period:</label>
+    <div id="early-voting-dates">
+        Start: <span id="early_voting_start"></span><br>
+        End: <span id="early_voting_end"></span>
+    </div>
+    <label>Election Day:</label>
+    <div id="election-dates">
+        Start: <span id="election_date_start"></span><br>
+        End: <span id="election_date_end"></span>
+    </div>
+</div>
+
+<!-- Election Details -->
+<div id="election-details" style="display:none;">
+    {% if election %}
+        <p><strong>Early Voting:</strong>
+            <span id="early-voting">
+                {% if election.early_voting_start and election.early_voting_end %}
+                    {{ election.early_voting_start|datetime('%m/%d/%Y %I:%M %p') }} -
+                    {{ election.early_voting_end|datetime('%m/%d/%Y %I:%M %p') }}
+                {% endif %}
+            </span>
+        </p>
+        <p><strong>Election Period:</strong>
+            <span id="election-period">
+                {% if election.election_date_start and election.election_date_end %}
+                    {{ election.election_date_start|datetime('%m/%d/%Y %I:%M %p') }} -
+                    {{ election.election_date_end|datetime('%m/%d/%Y %I:%M %p') }}
+                {% endif %}
+            </span>
+        </p>
+    {% endif %}
+</div>
+
+
+<!-- Candidate Registration/Edit Form -->
+<form method="POST" action="{{ url_for('candidate') }}" enctype="multipart/form-data" id="candidateForm">
+    <!-- Add hidden debug field -->
+    <input type="hidden" name="debug" value="true">
+
+    <!-- Add hidden candidate_id field for edit functionality -->
+    <input type="hidden" name="candidate_id" id="candidate_id" value="">
+
+    <!-- Election selection -->
+    <div class="form-group">
+        <label for="election_id">Select Election:</label>
+        <select name="election_id" id="election_id" required onchange="showElectionDetails(this.value)">
+            <option value="">Choose Election</option>
+            {% for election in elections %}
+            <option value="{{ election._id }}">
+                {{ election.position }} - {{ election.election_date_start }} to {{ election.election_date_end }}
+                {% if election.early_voting_start and election.early_voting_end %}
+                (Early Voting: {{ election.early_voting_start }} to {{ election.early_voting_end }})
+                {% endif %}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+             <div class="form-group">
+        <label for="first_name">First Name</label>
+        <input type="text" class="form-control" id="first_name" name="first_name" required>
+    </div>
+    <div class="form-group">
+        <label for="last_name">Last Name</label>
+        <input type="text" class="form-control" id="last_name" name="last_name" required>
+    </div>
+    <div class="form-group">
+        <label for="political_party">Political Party</label>
+        <input type="text" class="form-control" id="political_party" name="political_party" required>
+    </div>
+    <div class="form-group">
+        <label for="state">State/National:</label>
+        <select name="state" id="state" class="form-control" required>
+            <option value="">Select Region</option>
+            <option value="National">National</option>
+            <option value="Texas">Texas</option>
+            <option value="California">California</option>
+            <option value="New York">New York</option>
+            <option value="Illinois">Illinois</option>
+            <option value="Florida">Florida</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" class="form-control" id="email" name="email" required>
+    </div>
+    <div class="form-group">
+        <label for="phone">Phone</label>
+        <input type="tel" class="form-control" id="phone" name="phone" required>
+    </div>
+    <div class="form-group">
+        <label for="dob">Date of Birth</label>
+        <input type="date" class="form-control" id="dob" name="dob" required>
+    </div>
+    <div class="form-group">
+        <label for="photo">Photo</label>
+        <input type="file"
+               class="form-control"
+               id="photo"
+               name="photo"
+               accept="image/*"
+               required>
+    </div>
+    <div class="form-group">
+        <label for="profile_link">Candidate Profile Link</label>
+        <input type="url"
+               class="form-control"
+               id="profile_link"
+               name="profile_link"
+               placeholder="https://example.com/candidate-profile">
+    	</div>
+    <div class="button-group">
+        <button type="submit" class="btn btn-outline-primary btn-sm btn-custom">Add Candidate to Ballot</button>
+    </div>
+</form>
+</div>
+
+ <div class="mt-4">
+        <a href="{{ url_for('admin_edit_candidates') }}" class="btn btn-outline-primary btn-sm btn-custom">Edit Candidates</a>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary btn-sm btn-custom">Back to Dashboard</a>
+        <a href="{{ url_for('election') }}" class="btn btn-outline-secondary btn-sm btn-custom">Back to Elections</a>
+    </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script>
+const elections = {{ elections|tojson|safe }};
+
+function updateElectionDates(position) {
+    const electionIdSelect = document.getElementById('election_id');
+    const electionDetailsDiv = document.getElementById('election-details');
+
+    // Clear previous options
+    electionIdSelect.innerHTML = '<option value="">Choose Election</option>';
+
+    // Filter elections for the selected position
+    const relevantElections = elections.filter(e => e.position === position);
+
+    if (relevantElections.length > 0) {
+        relevantElections.forEach(election => {
+            const option = document.createElement('option');
+            option.value = election._id.$oid || election._id; // Use $oid if available, otherwise use _id
+            option.textContent = `${election.position} - ${formatDate(election.election_date_start)} to ${formatDate(election.election_date_end)}`;
+            if (election.early_voting_start && election.early_voting_end) {
+                option.textContent += ` (Early Voting: ${formatDate(election.early_voting_start)} to ${formatDate(election.early_voting_end)})`;
+            }
+            electionIdSelect.appendChild(option);
+        });
+        electionIdSelect.style.display = 'block';
+    } else {
+        electionIdSelect.style.display = 'none';
+    }
+
+    // Hide election details when position changes
+    electionDetailsDiv.style.display = 'none';
+}
+
+function showElectionDetails(electionId) {
+    const selectedElection = elections.find(e => (e._id.$oid || e._id) === electionId);
+    const electionDetailsDiv = document.getElementById('election-details');
+
+    if (selectedElection) {
+        electionDetailsDiv.style.display = "block";
+        document.getElementById("early-voting").innerText = selectedElection.early_voting_start && selectedElection.early_voting_end ?
+            `${formatDate(selectedElection.early_voting_start)} - ${formatDate(selectedElection.early_voting_end)}` : 'Not Available';
+        document.getElementById("election-period").innerText =
+            `${formatDate(selectedElection.election_date_start)} - ${formatDate(selectedElection.election_date_end)}`;
+    } else {
+        electionDetailsDiv.style.display = "none";
+    }
+}
+	// Function to load candidates for the selected election
+function loadCandidates(electionId) {
+    fetch(`/api/candidates/${electionId}`)
+        .then(response => response.json())
+        .then(candidates => {
+            const tableBody = document.getElementById('candidateTableBody');
+            tableBody.innerHTML = '';
+            candidates.forEach(candidate => {
+                const row = `
+                    <tr>
+                        <td>${candidate.first_name} ${candidate.last_name}</td>
+                        <td>${candidate.political_party}</td>
+                        <td>${candidate.state}</td>
+                        <td>
+                            <button onclick="editCandidate('${candidate._id}')" class="btn btn-sm btn-outline-primary">Edit</button>
+                        </td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        });
+}
+
+function formatDateTime(dateString) {
+    const date = new Date(dateString);
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = String(date.getHours() % 12 || 12).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const ampm = date.getHours() >= 12 ? 'PM' : 'AM';
+
+    return `${month}/${day}/${year} ${hours}:${minutes} ${ampm}`;
+}
+
+// Example usage
+document.addEventListener('DOMContentLoaded', () => {
+    const dateElements = document.querySelectorAll('.date-format');
+    dateElements.forEach(element => {
+        const originalDate = element.getAttribute('data-date');
+        element.textContent = formatDateTime(originalDate);
+    });
+});
+
+// Function to edit a candidate
+function editCandidate(candidateId) {
+    fetch(`/api/candidate/${candidateId}`)
+        .then(response => response.json())
+        .then(candidate => {
+            // Populate the form with candidate data
+            document.getElementById('candidate_id').value = candidate._id;
+            document.getElementById('election_id').value = candidate.election_id;
+            document.getElementById('first_name').value = candidate.first_name;
+            document.getElementById('last_name').value = candidate.last_name;
+            document.getElementById('political_party').value = candidate.political_party;
+            document.getElementById('state').value = candidate.state;
+            document.getElementById('email').value = candidate.email;
+            document.getElementById('phone').value = candidate.phone;
+            document.getElementById('dob').value = candidate.dob;
+            document.getElementById('profile_link').value = candidate.profile_link;
+
+            // Change submit button text
+            document.getElementById('submitButton').textContent = 'Update Candidate';
+
+            // Scroll to the form
+            document.getElementById('candidateForm').scrollIntoView();
+        });
+}
+
+// Event listener for form submission
+document.getElementById('candidateForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const candidateId = formData.get('candidate_id');
+    const url = candidateId ? `/api/candidate/${candidateId}` : "{{ url_for('candidate') }}";
+    const method = candidateId ? 'PUT' : 'POST';
+
+    fetch(url, {
+        method: method,
+        body: formData
+    })
+    .then(response => response.json())
+    .then(result => {
+        alert(result.message);
+        // Reset form and reload candidates
+        document.getElementById('candidateForm').reset();
+        document.getElementById('candidate_id').value = '';
+        document.getElementById('submitButton').textContent = 'Add Candidate to Ballot';
+        loadCandidates(formData.get('election_id'));
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    });
+});
+
+// Load candidates when an election is selected
+document.getElementById('election_id').addEventListener('change', function() {
+    loadCandidates(this.value);
+
+function formatDateTime(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+        month: '2-digit',
+        day: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+    });
+}
+
+function showElectionDetails(electionId) {
+    const election = elections.find(e => e._id === electionId);
+    if (election) {
+        const earlyVotingText = `${formatDateTime(election.early_voting_start)} - ${formatDateTime(election.early_voting_end)}`;
+        const electionPeriodText = `${formatDateTime(election.election_date_start)} - ${formatDateTime(election.election_date_end)}`;
+
+        document.getElementById('early-voting').textContent = earlyVotingText;
+        document.getElementById('election-period').textContent = electionPeriodText;
+        document.getElementById('election-details').style.display = 'block';
+    }
+}
+
+function populateElectionOptions() {
+    // Implement this function to populate initial election options if needed
+    console.log('Populating initial election options');
+}
+
+	// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    const positionSelect = document.getElementById('position');
+    const electionIdSelect = document.getElementById('election_id');
+    const form = document.querySelector('form');
+
+    if (positionSelect) {
+        positionSelect.addEventListener('change', function() {
+            updateElectionDates(this.value);
+        });
+    }
+
+    if (electionIdSelect) {
+        electionIdSelect.addEventListener('change', function() {
+            showElectionDetails(this.value);
+        });
+    }
+
+    if (form) {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            // Collect form data
+            const formData = new FormData(this);
+
+            // Ensure election_id is a string
+            const electionId = formData.get('election_id');
+            if (electionId && typeof electionId === 'object' && electionId.$oid) {
+                formData.set('election_id', electionId.$oid);
+            }
+
+            // Send data to server
+            fetch(this.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(data => {
+                try {
+                    const jsonData = JSON.parse(data);
+                    if (jsonData.success) {
+                        alert('Candidate registered successfully!');
+                        window.location.href = "{{ url_for('candidate') }}";
+                    } else {
+                        alert('Error registering candidate: ' + (jsonData.message || 'Unknown error'));
+                    }
+                } catch (error) {
+                    console.error('Received non-JSON response:', data);
+                    if (data.includes('Candidate registered:')) {
+                        alert('Candidate registered successfully!');
+                        window.location.href = "{{ url_for('candidate') }}";
+                    } else {
+                        const parser = new DOMParser();
+                        const htmlDoc = parser.parseFromString(data, 'text/html');
+                        const errorMessage = htmlDoc.querySelector('.alert-danger')?.textContent || 'An unexpected error occurred';
+                        alert('Error registering candidate: ' + errorMessage);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while registering the candidate: ' + error.message);
+            });
+        });
+    }
+
+    populateElectionOptions();
+
+    	if (form) {
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        // Collect form data
+        const formData = new FormData(this);
+
+        // Ensure election_id is a string
+        const electionId = formData.get('election_id');
+        if (electionId && typeof electionId === 'object' && electionId.$oid) {
+            formData.set('election_id', electionId.$oid);
+        }
+
+        // Send data to server
+        fetch(this.action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(data => {
+            try {
+                const jsonData = JSON.parse(data);
+                if (jsonData.success) {
+                    alert('Candidate registered successfully!');
+                    // Update admin_candidates
+                    updateAdminCandidates(formData);
+                    window.location.href = "{{ url_for('candidate') }}";
+                } else {
+                    alert('Error registering candidate: ' + (jsonData.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Received non-JSON response:', data);
+                if (data.includes('Candidate registered:')) {
+                    alert('Candidate registered successfully!');
+                    // Update admin_candidates
+                    updateAdminCandidates(formData);
+                    window.location.href = "{{ url_for('candidate') }}";
+                } else {
+                    const parser = new DOMParser();
+                    const htmlDoc = parser.parseFromString(data, 'text/html');
+                    const errorMessage = htmlDoc.querySelector('.alert-danger')?.textContent || 'An unexpected error occurred';
+                    alert('Error registering candidate: ' + errorMessage);
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while registering the candidate: ' + error.message);
+        });
+    });
+}
+
+function updateAdminCandidates(formData) {
+    // Convert FormData to a plain object
+    const candidateData = Object.fromEntries(formData.entries());
+
+    // Send the candidate data to the admin_candidates endpoint
+    fetch('/admin_candidates', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(candidateData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Admin candidates updated:', data);
+    })
+    .catch(error => {
+        console.error('Error updating admin candidates:', error);
+    });
+}
+
+populateElectionOptions();
+
+});
+
+</script>

@@ -1,0 +1,12 @@
+<title>Thank You for Voting</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="thank-you-container">
+{% extends "base.html" %}
+{% block content %}
+<h1>Thank You for Voting!</h1>
+<p>Your vote has been successfully recorded. Thank you for participating in the democratic process.</p>
+<a href="{{ url_for('index') }}" class="btn btn-primary">Return to Home</a>
+{% endblock %}

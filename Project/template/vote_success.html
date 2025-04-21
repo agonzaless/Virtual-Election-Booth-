@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vote Successfully Cast</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-message">
+            <i class="fas fa-check-circle"></i>
+            <h1>Thank You for Voting!</h1>
+            <p>Your vote has been successfully submitted and counted.</p>
+            <p>Your voting session has ended and you have been logged out.</p>
+            <div class="success-actions">
+                <a href="{{ url_for('index') }}" class="home-button">
+                    <i class="fas fa-home"></i> Return to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

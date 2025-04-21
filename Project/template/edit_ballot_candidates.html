@@ -1,0 +1,56 @@
+	<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Ballot Candidates</title>
+</head>
+<body>
+    <h1>Edit Ballot Candidates</h1>
+    <form method="POST" action="{{ url_for('edit_ballot_candidates') }}" enctype="multipart/form-data">
+        {% for candidate in candidates %}
+        <div class="candidate-form">
+            <h2>{{ candidate.first_name }} {{ candidate.last_name }}</h2>
+            <input type="hidden" name="candidate_id" value="{{ candidate._id }}">
+
+            <!-- Existing fields -->
+            <label for="first_name_{{ candidate._id }}">First Name:</label>
+            <input type="text" id="first_name_{{ candidate._id }}" name="first_name_{{ candidate._id }}" value="{{ candidate.first_name }}" required>
+
+            <label for="last_name_{{ candidate._id }}">Last Name:</label>
+            <input type="text" id="last_name_{{ candidate._id }}" name="last_name_{{ candidate._id }}" value="{{ candidate.last_name }}" required>
+
+            <!-- Position dropdown -->
+            <label for="position_{{ candidate._id }}">Position:</label>
+            <select id="position_{{ candidate._id }}" name="position_{{ candidate._id }}" required>
+                <option value="President" {% if candidate.position == 'President' %}selected{% endif %}>President</option>
+                <option value="Vice President" {% if candidate.position == 'Vice President' %}selected{% endif %}>Vice President</option>
+                <option value="Senator" {% if candidate.position == 'Senator' %}selected{% endif %}>Senator</option>
+                <option value="Governor" {% if candidate.position == 'Governor' %}selected{% endif %}>Governor</option>
+            </select>
+
+            <!-- Campaign dates -->
+            <label for="campaign_start_{{ candidate._id }}">Campaign Start Date:</label>
+            <input type="datetime-local" id="campaign_start_{{ candidate._id }}" name="campaign_start_{{ candidate._id }}" value="{{ candidate.campaign_start }}">
+
+            <label for="campaign_end_{{ candidate._id }}">Campaign End Date:</label>
+            <input type="datetime-local" id="campaign_end_{{ candidate._id }}" name="campaign_end_{{ candidate._id }}" value="{{ candidate.campaign_end }}">
+
+            <!-- Remaining existing fields -->
+            <label for="party_{{ candidate._id }}">Political Party:</label>
+            <input type="text" id="party_{{ candidate._id }}" name="party_{{ candidate._id }}" value="{{ candidate.political_party }}">
+
+            <label for="state_{{ candidate._id }}">State:</label>
+            <input type="text" id="state_{{ candidate._id }}" name="state_{{ candidate._id }}" value="{{ candidate.state }}">
+
+            <label for="email_{{ candidate._id }}">Email:</label>
+            <input type="email" id="email_{{ candidate._id }}" name="email_{{ candidate._id }}" value="{{ candidate.email }}" required>
+
+            <label for="profile_link_{{ candidate._id }}">Profile Link:</label>
+            <input type="url" id="profile_link_{{ candidate._id }}" name="profile_link_{{ candidate._id }}" value="{{ candidate.profile_link }}">
+        </div>
+        {% endfor %}
+        <button type="submit">Update Candidates</button>
+    </form>
+</body>
+</html>

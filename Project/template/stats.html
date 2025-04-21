@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting Statistics</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        .chart-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .chart {
+            width: 48%;
+            margin-bottom: 20px;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .stats-table th, .stats-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .stats-table th {
+            background-color: #f2f2f2;
+        }
+        button {
+    padding: 8px 16px;
+    font-size: 14px;
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    width: 200px;
+    display: block;
+        }
+        button:hover {
+            background-color: #34495e;
+        }
+    </style>
+</head>
+	<body>
+    <h1>Voting Statistics</h1>
+
+    <h2>Demographics</h2>
+    <select id="state-select">
+        <option value="overall">Overall</option>
+        {% for state in target_states %}
+        <option value="{{ state }}">{{ state }}</option>
+        {% endfor %}
+    </select>
+
+    <select id="category-select">
+        <optgroup label="Collective Statistics">
+            {% for category in collective_categories %}
+            <option value="{{ category }}">{{ category|capitalize }}</option>
+            {% endfor %}
+        </optgroup>
+        <optgroup label="Voting Statistics">
+            {% for category in voting_categories %}
+            <option value="{{ category }}">{{ category|capitalize }}</option>
+            {% endfor %}
+        </optgroup>
+    </select>
+
+    <button id="update-button">Update</button>
+
+    <div class="chart-container">
+        <div id="main-chart" class="chart"></div>
+    </div>
+
+    <table id="demographic-table">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Count</th>
+                <th>Percentage</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+  <script>
+    var categoryData = {};
+    var stateCharts = {{ state_charts|tojson|safe }};
+    var overallCharts = {{ charts|tojson|safe }};
+
+    function updateChart(state, category) {
+        var chartDiv = document.getElementById('main-chart');
+        var chartData;
+
+        if (state === 'overall') {
+            chartData = JSON.parse(overallCharts[category]);
+        } else {
+            chartData = JSON.parse(stateCharts[state][category]);
+        }
+
+        Plotly.newPlot(chartDiv, chartData);
+
+        var tableBody = document.querySelector('#demographic-table tbody');
+        if (tableBody) {
+            tableBody.innerHTML = '';
+            var dataToUse = state === 'overall' ? categoryData[category] : categoryData[state][category];
+            for (var key in dataToUse) {
+                var row = tableBody.insertRow();
+                row.insertCell(0).textContent = key;
+                row.insertCell(1).textContent = dataToUse[key].count;
+                row.insertCell(2).textContent = dataToUse[key].percentage + '%';
+            }
+        }
+    }
+
+    $(document).ready(function() {
+        // Initial data population
+        categoryData['overall'] = {};
+        {% for category in collective_categories + voting_categories %}
+        categoryData['overall']['{{ category }}'] = {{ category_stats[category + '_stats']|tojson|safe }};
+        {% endfor %}
+
+        {% for state in target_states %}
+        categoryData['{{ state }}'] = {};
+        {% for category in collective_categories + voting_categories %}
+        categoryData['{{ state }}']['{{ category }}'] = {{ state_category_stats[state][category + '_stats']|tojson|safe }};
+        {% endfor %}
+        {% endfor %}
+
+        // Initialize with default values
+        updateChart('overall', '{{ collective_categories[0] }}');
+
+        // Add event listeners for state and category changes
+        $('#state-select, #category-select').change(function() {
+            var state = $('#state-select').val();
+            var category = $('#category-select').val();
+            updateChart(state, category);
+        });
+    });
+</script>
+</body>
